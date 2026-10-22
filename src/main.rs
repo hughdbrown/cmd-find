@@ -18,12 +18,12 @@ fn main() -> ExitCode {
     let cli = Cli::parse();
     let path = env::var_os("PATH").unwrap_or_default();
     let found = find(&path, &cli.pattern);
-    for p in &found {
-        println!("{}", p.display());
-    }
     if found.is_empty() {
         ExitCode::FAILURE
     } else {
+        for p in &found {
+            println!("{}", p.display());
+        }
         ExitCode::SUCCESS
     }
 }
