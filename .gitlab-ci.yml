@@ -1,0 +1,32 @@
+# Runs on every push and merge request. Uses the official Rust image, which
+# ships cargo, rustfmt and clippy.
+image: rust:latest
+
+stages:
+  - test
+
+variables:
+  CARGO_HOME: $CI_PROJECT_DIR/.cargo
+  CARGO_TERM_COLOR: always
+
+cache:
+  key: $CI_COMMIT_REF_SLUG
+  paths:
+    - .cargo/registry
+    - .cargo/git
+    - target
+
+test:
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  before_script:
+    # The repo's .cargo/config.toml points at ld64.lld for macOS builds only;
+    # this Linux runner uses the default linker.
+    - rustc --version && cargo --version
+    - rustup component add rustfmt clippy
+  script:
+    - cargo fmt --check
+    - cargo clippy --all-targets -- -D warnings
+    - cargo test
