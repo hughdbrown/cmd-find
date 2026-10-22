@@ -1,0 +1,28 @@
+[package]
+name = "cmd-find"
+version = "0.1.0"
+edition = "2024"
+description = "Find executables on PATH whose file name matches a glob"
+license = "MIT"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+glob = "0.3"
+rayon = "1"
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints.clippy]
+unwrap_used = "warn"
+expect_used = "warn"
+indexing_slicing = "warn"
+pedantic = { level = "warn", priority = -1 }
+
+[profile.release]
+codegen-units = 1
+debug = false
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true
